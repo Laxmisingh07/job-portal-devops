@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Jobs - Job Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Available Jobs</h1>
+
+        <button onclick="logout()">
+            Logout
+        </button>
+
+        <div id="jobsContainer">
+            Loading jobs...
+        </div>
+
+    </div>
+
+    <script src="js/script.js"></script>
+
+    <script>
+
+        async function loadJobs() {
+
+            const container =
+                document.getElementById(
+                    "jobsContainer"
+                );
+
+            try {
+
+                const data =
+                    await apiRequest("/jobs");
+
+                container.innerHTML = "";
+
+                data.jobs.forEach(function(job) {
+
+                    const card =
+                        document.createElement("div");
+
+                    card.className = "job-card";
+
+                    card.innerHTML = `
+
+                        <h2>${job.title}</h2>
+
+                        <p>
+                            <strong>
+                                Company:
+                            </strong>
+                            ${job.company}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Location:
+                            </strong>
+                            ${job.location}
+                        </p>
+
+                        <p>
+                            ${job.description}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Skills:
+                            </strong>
+                            ${job.skills || "Not specified"}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Salary:
+                            </strong>
+                            ${job.salary || "Not specified"}
+                        </p>
+
+                        <button
+                            onclick="applyForJob(${job.id})"
+                        >
+                            Apply
+                        </button>
+
+                    `;
+
+                    container.appendChild(card);
+
+                });
+
+            } catch (error) {
+
+                container.textContent =
+                    error.message;
+
+            }
+
+        }
+
+        async function applyForJob(jobId) {
+
+            const token = getToken();
+
+            if (!token) {
+
+                alert("Please login first.");
+
+                window.location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+            const coverLetter =
+                prompt(
+                    "Enter your cover letter:"
+                );
+
+            if (!coverLetter) {
+                return;
+            }
+
+            try {
+
+                const data =
+                    await apiRequest(
+                        "/applications",
+                        "POST",
+                        {
+                            job_id: jobId,
+                            resume: "resume.pdf",
+                            cover_letter: coverLetter
+                        },
+                        true
+                    );
+
+                alert(data.message);
+
+            } catch (error) {
+
+                alert(error.message);
+
+            }
+
+        }
+
+        loadJobs();
+
+    </script>
+
+</body>
+
+</html>

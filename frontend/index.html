@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Job Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            Job Portal
+        </div>
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="jobs.html">
+                Jobs
+            </a>
+
+            <a href="post-job.html">
+                Post Job
+            </a>
+
+            <a href="applications.html">
+                Applications
+            </a>
+
+            <a
+                href="login.html"
+                id="loginLink"
+            >
+                Login
+            </a>
+
+            <button
+                id="logoutButton"
+                onclick="logout()"
+                style="display:none;"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </nav>
+
+
+    <main class="hero">
+
+        <div class="hero-content">
+
+            <h1>
+                Find Your Dream Job
+            </h1>
+
+            <p>
+                Discover opportunities, connect with
+                recruiters and build your career.
+            </p>
+
+            <div class="hero-buttons">
+
+                <a
+                    href="jobs.html"
+                    class="button"
+                >
+                    Browse Jobs
+                </a>
+
+                <a
+                    href="register.html"
+                    class="button"
+                >
+                    Create Account
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <section class="features">
+
+        <h2>
+            Why Use Our Job Portal?
+        </h2>
+
+        <div class="feature-container">
+
+            <div class="feature-card">
+
+                <h3>
+                    🔍 Find Jobs
+                </h3>
+
+                <p>
+                    Search and discover job opportunities
+                    matching your skills.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <h3>
+                    📝 Apply Easily
+                </h3>
+
+                <p>
+                    Apply for jobs with just a few clicks
+                    and track your applications.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <h3>
+                    💼 Hire Talent
+                </h3>
+
+                <p>
+                    Recruiters can post jobs and manage
+                    candidate applications.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+
+        <p>
+            © 2026 Job Portal | DevOps Project
+        </p>
+
+    </footer>
+
+
+    <script src="js/script.js"></script>
+
+    <script>
+
+        const token = getToken();
+
+        if (token) {
+
+            document
+                .getElementById("loginLink")
+                .style.display = "none";
+
+            document
+                .getElementById("logoutButton")
+                .style.display = "inline-block";
+
+        }
+
+    </script>
+
+</body>
+
+</html>

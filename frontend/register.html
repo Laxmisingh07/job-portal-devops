@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Register - Job Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Job Portal</h1>
+
+        <h2>Create Account</h2>
+
+        <form id="registerForm">
+
+            <input
+                type="text"
+                id="name"
+                placeholder="Full Name"
+                required
+            >
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Email"
+                required
+            >
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Password"
+                required
+            >
+
+            <select id="role" required>
+
+                <option value="candidate">
+                    Candidate
+                </option>
+
+                <option value="recruiter">
+                    Recruiter
+                </option>
+
+            </select>
+
+            <button type="submit">
+                Register
+            </button>
+
+        </form>
+
+        <p id="message"></p>
+
+        <p>
+            Already have an account?
+            <a href="login.html">Login</a>
+        </p>
+
+    </div>
+
+    <script src="js/script.js"></script>
+
+    <script>
+
+        document
+            .getElementById("registerForm")
+            .addEventListener("submit", async function(event) {
+
+                event.preventDefault();
+
+                const name =
+                    document.getElementById("name").value;
+
+                const email =
+                    document.getElementById("email").value;
+
+                const password =
+                    document.getElementById("password").value;
+
+                const role =
+                    document.getElementById("role").value;
+
+                const message =
+                    document.getElementById("message");
+
+                try {
+
+                    const data = await apiRequest(
+                        "/auth/register",
+                        "POST",
+                        {
+                            name,
+                            email,
+                            password,
+                            role
+                        }
+                    );
+
+                    message.textContent =
+                        data.message;
+
+                    document
+                        .getElementById("registerForm")
+                        .reset();
+
+                } catch (error) {
+
+                    message.textContent =
+                        error.message;
+
+                }
+
+            });
+
+    </script>
+
+</body>
+
+</html>

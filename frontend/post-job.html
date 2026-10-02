@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Post Job - Job Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            Job Portal
+        </div>
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="jobs.html">
+                Jobs
+            </a>
+
+            <a href="post-job.html">
+                Post Job
+            </a>
+
+            <a href="applications.html">
+                Applications
+            </a>
+
+            <button onclick="logout()">
+                Logout
+            </button>
+
+        </div>
+
+    </nav>
+
+
+    <div class="container">
+
+        <h1>
+            Post a New Job
+        </h1>
+
+        <form id="jobForm">
+
+            <label>
+                Job Title
+            </label>
+
+            <input
+                type="text"
+                id="title"
+                placeholder="Example: Junior DevOps Engineer"
+                required
+            >
+
+
+            <label>
+                Company
+            </label>
+
+            <input
+                type="text"
+                id="company"
+                placeholder="Company name"
+                required
+            >
+
+
+            <label>
+                Location
+            </label>
+
+            <input
+                type="text"
+                id="location"
+                placeholder="Example: Mumbai"
+                required
+            >
+
+
+            <label>
+                Job Description
+            </label>
+
+            <textarea
+                id="description"
+                placeholder="Describe the job..."
+                required
+            ></textarea>
+
+
+            <label>
+                Required Skills
+            </label>
+
+            <input
+                type="text"
+                id="skills"
+                placeholder="Linux, Docker, Jenkins, Kubernetes"
+            >
+
+
+            <label>
+                Salary
+            </label>
+
+            <input
+                type="text"
+                id="salary"
+                placeholder="Example: 5-8 LPA"
+            >
+
+
+            <label>
+                Job Type
+            </label>
+
+            <select id="job_type">
+
+                <option value="Full-time">
+                    Full-time
+                </option>
+
+                <option value="Part-time">
+                    Part-time
+                </option>
+
+                <option value="Internship">
+                    Internship
+                </option>
+
+                <option value="Contract">
+                    Contract
+                </option>
+
+            </select>
+
+
+            <button type="submit">
+                Post Job
+            </button>
+
+        </form>
+
+
+        <p id="message"></p>
+
+    </div>
+
+
+    <script src="js/script.js"></script>
+
+
+    <script>
+
+        const user = getUser();
+
+        if (!getToken()) {
+
+            alert(
+                "Please login first."
+            );
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+        if (
+            user &&
+            user.role !== "recruiter"
+        ) {
+
+            alert(
+                "Only recruiters can post jobs."
+            );
+
+            window.location.href =
+                "jobs.html";
+
+        }
+
+
+        document
+            .getElementById("jobForm")
+            .addEventListener(
+                "submit",
+                async function(event) {
+
+                    event.preventDefault();
+
+                    const message =
+                        document.getElementById(
+                            "message"
+                        );
+
+                    const jobData = {
+
+                        title:
+                            document.getElementById(
+                                "title"
+                            ).value,
+
+                        company:
+                            document.getElementById(
+                                "company"
+                            ).value,
+
+                        location:
+                            document.getElementById(
+                                "location"
+                            ).value,
+
+                        description:
+                            document.getElementById(
+                                "description"
+                            ).value,
+
+                        skills:
+                            document.getElementById(
+                                "skills"
+                            ).value,
+
+                        salary:
+                            document.getElementById(
+                                "salary"
+                            ).value,
+
+                        job_type:
+                            document.getElementById(
+                                "job_type"
+                            ).value
+                    };
+
+
+                    try {
+
+                        const data =
+                            await apiRequest(
+                                "/jobs",
+                                "POST",
+                                jobData,
+                                true
+                            );
+
+                        message.textContent =
+                            data.message;
+
+                        document
+                            .getElementById(
+                                "jobForm"
+                            )
+                            .reset();
+
+                    } catch (error) {
+
+                        message.textContent =
+                            error.message;
+
+                    }
+
+                }
+            );
+
+    </script>
+
+</body>
+
+</html>

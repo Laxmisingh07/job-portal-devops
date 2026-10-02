@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Applications - Job Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            Job Portal
+        </div>
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="jobs.html">
+                Jobs
+            </a>
+
+            <a href="post-job.html">
+                Post Job
+            </a>
+
+            <a href="applications.html">
+                Applications
+            </a>
+
+            <button onclick="logout()">
+                Logout
+            </button>
+
+        </div>
+
+    </nav>
+
+
+    <div class="container">
+
+        <h1>
+            Applications
+        </h1>
+
+        <p id="userInfo"></p>
+
+        <div id="applicationsContainer">
+            Loading applications...
+        </div>
+
+    </div>
+
+
+    <script src="js/script.js"></script>
+
+
+    <script>
+
+        const currentUser = getUser();
+
+
+        if (!getToken()) {
+
+            alert(
+                "Please login first."
+            );
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+        if (currentUser) {
+
+            document
+                .getElementById("userInfo")
+                .textContent =
+                "Logged in as: "
+                + currentUser.name
+                + " ("
+                + currentUser.role
+                + ")";
+
+        }
+
+
+        async function loadApplications() {
+
+            const container =
+                document.getElementById(
+                    "applicationsContainer"
+                );
+
+
+            try {
+
+                const data =
+                    await apiRequest(
+                        "/applications",
+                        "GET",
+                        null,
+                        true
+                    );
+
+
+                container.innerHTML = "";
+
+
+                if (data.applications.length === 0) {
+
+                    container.innerHTML =
+                        "<p>No applications found.</p>";
+
+                    return;
+
+                }
+
+
+                data.applications.forEach(
+                    function(application) {
+
+                        const card =
+                            document.createElement(
+                                "div"
+                            );
+
+                        card.className =
+                            "job-card";
+
+
+                        let html = `
+
+                            <h3>
+                                Application #${application.id}
+                            </h3>
+
+                            <p>
+                                <strong>
+                                    Job ID:
+                                </strong>
+                                ${application.job_id}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Candidate ID:
+                                </strong>
+                                ${application.candidate_id}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Resume:
+                                </strong>
+                                ${application.resume || "Not provided"}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Cover Letter:
+                                </strong>
+                                ${application.cover_letter || "Not provided"}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Status:
+                                </strong>
+                                ${application.status}
+                            </p>
+
+                        `;
+
+
+                        if (
+                            currentUser &&
+                            currentUser.role ===
+                            "recruiter"
+                        ) {
+
+                            html += `
+
+                                <label>
+                                    Change Status
+                                </label>
+
+                                <select
+                                    id="status-${application.id}"
+                                >
+
+                                    <option value="Applied">
+                                        Applied
+                                    </option>
+
+                                    <option value="Shortlisted">
+                                        Shortlisted
+                                    </option>
+
+                                    <option value="Rejected">
+                                        Rejected
+                                    </option>
+
+                                    <option value="Selected">
+                                        Selected
+                                    </option>
+
+                                </select>
+
+                                <button
+                                    onclick="
+                                        updateStatus(
+                                            ${application.id}
+                                        )
+                                    "
+                                >
+                                    Update Status
+                                </button>
+
+                            `;
+
+                        }
+
+
+                        card.innerHTML = html;
+
+                        container.appendChild(
+                            card
+                        );
+
+                    }
+                );
+
+
+            } catch (error) {
+
+                container.textContent =
+                    error.message;
+
+            }
+
+        }
+
+
+        async function updateStatus(
+            applicationId
+        ) {
+
+            const status =
+                document.getElementById(
+                    "status-" +
+                    applicationId
+                ).value;
+
+
+            try {
+
+                const data =
+                    await apiRequest(
+                        "/applications/"
+                        + applicationId
+                        + "/status",
+                        "PUT",
+                        {
+                            status: status
+                        },
+                        true
+                    );
+
+
+                alert(data.message);
+
+                loadApplications();
+
+
+            } catch (error) {
+
+                alert(error.message);
+
+            }
+
+        }
+
+
+        loadApplications();
+
+    </script>
+
+</body>
+
+</html>
