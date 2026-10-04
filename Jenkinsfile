@@ -4,6 +4,7 @@ pipeline {
 
     environment {
         PYTHON = 'C:\\Users\\laxmi\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
+        DOCKER = 'C:\\Users\\laxmi\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe'
     }
 
     stages {
@@ -21,7 +22,7 @@ pipeline {
 
                 bat '"%PYTHON%" --version'
                 bat 'git --version'
-                bat 'docker --version'
+                bat '"%DOCKER%" --version'
             }
         }
 
@@ -54,7 +55,7 @@ pipeline {
                 echo 'Building Docker image...'
 
                 bat '''
-                    docker build -t jobportal-backend:latest ./backend
+                    "%DOCKER%" build -t jobportal-backend:latest ./backend
                 '''
             }
         }
