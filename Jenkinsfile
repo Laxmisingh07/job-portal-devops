@@ -6,7 +6,7 @@ pipeline {
         PYTHON = 'C:\\Users\\laxmi\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
         DOCKER = 'C:\\Users\\laxmi\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe'
 
-        DOCKER_IMAGE = 'laxmi93243334/jobportal-backend'
+        DOCKER_IMAGE = 'laxmi93243334/jobportal-backend:latest'
     }
 
     stages {
@@ -73,7 +73,7 @@ pipeline {
 
                 withCredentials([
                     usernamePassword(
-                        credentialsId: 'dockerhub-credentials1',
+                        credentialsId: 'dockerhub-credentials',
                         usernameVariable: 'DOCKER_USERNAME',
                         passwordVariable: 'DOCKER_PASSWORD'
                     )
