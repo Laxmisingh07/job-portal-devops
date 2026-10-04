@@ -2,6 +2,10 @@ pipeline {
 
     agent any
 
+    environment {
+        PYTHON = 'C:\\Users\\laxmi\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
+    }
+
     stages {
 
         stage('Checkout') {
@@ -15,7 +19,7 @@ pipeline {
             steps {
                 echo 'Checking development environment...'
 
-                bat 'python --version'
+                bat '"%PYTHON%" --version'
                 bat 'git --version'
                 bat 'docker --version'
             }
@@ -27,8 +31,8 @@ pipeline {
 
                 bat '''
                     cd backend
-                    python -m pip install --upgrade pip
-                    pip install -r requirements.txt
+                    "%PYTHON%" -m pip install --upgrade pip
+                    "%PYTHON%" -m pip install -r requirements.txt
                 '''
             }
         }
@@ -40,7 +44,7 @@ pipeline {
                 bat '''
                     cd backend
                     set PYTHONPATH=.
-                    pytest -v
+                    "%PYTHON%" -m pytest -v
                 '''
             }
         }
