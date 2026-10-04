@@ -6,7 +6,7 @@ pipeline {
         PYTHON = 'C:\\Users\\laxmi\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
         DOCKER = 'C:\\Users\\laxmi\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe'
 
-        DOCKER_IMAGE = 'laxmi93243334/jobportal-backend:latest'
+        DOCKER_IMAGE = 'laxmi93243334/jobportal-backend'
     }
 
     stages {
