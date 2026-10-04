@@ -39,14 +39,16 @@ pipeline {
         }
 
         stage('Run Tests') {
-            steps {
-                echo 'Running automated tests...'
+    steps {
+        echo 'Running automated tests...'
 
-                bat '''
-                    "%PYTHON%" -m pytest -v tests
-                '''
-            }
-        }
+        bat '''
+            cd backend
+            set PYTHONPATH=.
+            "%PYTHON%" -m pytest -v tests
+        '''
+    }
+}
 
         stage('Docker Build') {
             steps {
