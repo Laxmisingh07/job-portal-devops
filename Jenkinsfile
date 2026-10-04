@@ -43,9 +43,7 @@ pipeline {
                 echo 'Running automated tests...'
 
                 bat '''
-                    cd backend
-                    set PYTHONPATH=.
-                    "%PYTHON%" -m pytest -v
+                    "%PYTHON%" -m pytest -v tests
                 '''
             }
         }
