@@ -1,80 +1,80 @@
-```groovy
 pipeline {
 
-    agent any
+agent any
 
-    environment {
-        PYTHON = 'C:\\Users\\laxmi\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
-        DOCKER = 'C:\\Users\\laxmi\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe'
-    }
+environment {
+    PYTHON = 'C:\\Users\\laxmi\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
+    DOCKER = 'C:\\Users\\laxmi\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe'
+}
 
-    stages {
+stages {
 
-        stage('Checkout') {
-            steps {
-                echo 'Checking out Job Portal source code...'
-                checkout scm
-            }
-        }
-
-        stage('Environment Check') {
-            steps {
-                echo 'Checking development environment...'
-
-                bat '"%PYTHON%" --version'
-                bat 'git --version'
-                bat '"%DOCKER%" --version'
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                echo 'Installing Python dependencies...'
-
-                bat '''
-                    cd backend
-                    "%PYTHON%" -m pip install --upgrade pip
-                    "%PYTHON%" -m pip install -r requirements.txt
-                '''
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                echo 'Running automated backend tests...'
-
-                bat '''
-                    cd backend
-                    "%PYTHON%" -m pytest -v tests
-                '''
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                echo 'Building Job Portal backend Docker image...'
-
-                bat '''
-                    "%DOCKER%" build -t jobportal-backend:latest ./backend
-                '''
-            }
+    stage('Checkout') {
+        steps {
+            echo 'Checking out Job Portal source code...'
+            checkout scm
         }
     }
 
-    post {
+    stage('Environment Check') {
+        steps {
+            echo 'Checking development environment...'
 
-        success {
-            echo '======================================'
-            echo 'JOB PORTAL CI PIPELINE SUCCESSFUL'
-            echo '======================================'
+            bat '"%PYTHON%" --version'
+            bat 'git --version'
+            bat '"%DOCKER%" --version'
         }
+    }
 
-        failure {
-            echo '======================================'
-            echo 'JOB PORTAL CI PIPELINE FAILED'
-            echo 'Check the console output.'
-            echo '======================================'
+    stage('Install Dependencies') {
+        steps {
+            echo 'Installing Python dependencies...'
+
+            bat '''
+                cd backend
+                "%PYTHON%" -m pip install --upgrade pip
+                "%PYTHON%" -m pip install -r requirements.txt
+            '''
+        }
+    }
+
+    stage('Run Tests') {
+        steps {
+            echo 'Running automated backend tests...'
+
+            bat '''
+                cd backend
+                "%PYTHON%" -m pytest -v tests
+            '''
+        }
+    }
+
+    stage('Docker Build') {
+        steps {
+            echo 'Building Job Portal backend Docker image...'
+
+            bat '''
+                "%DOCKER%" build -t jobportal-backend:latest ./backend
+            '''
         }
     }
 }
-```
+
+post {
+
+    success {
+        echo '======================================'
+        echo 'JOB PORTAL CI PIPELINE SUCCESSFUL'
+        echo '======================================'
+    }
+
+    failure {
+        echo '======================================'
+        echo 'JOB PORTAL CI PIPELINE FAILED'
+        echo 'Check the console output.'
+        echo '======================================'
+    }
+}
+
+
+}
