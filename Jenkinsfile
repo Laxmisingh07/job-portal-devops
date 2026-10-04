@@ -1,3 +1,4 @@
+```groovy
 pipeline {
 
     agent any
@@ -39,20 +40,19 @@ pipeline {
         }
 
         stage('Run Tests') {
-    steps {
-        echo 'Running automated tests...'
+            steps {
+                echo 'Running automated backend tests...'
 
-        bat '''
-            cd backend
-            set PYTHONPATH=.
-            "%PYTHON%" -m pytest -v tests
-        '''
-    }
-}
+                bat '''
+                    cd backend
+                    "%PYTHON%" -m pytest -v tests
+                '''
+            }
+        }
 
         stage('Docker Build') {
             steps {
-                echo 'Building Docker image...'
+                echo 'Building Job Portal backend Docker image...'
 
                 bat '''
                     "%DOCKER%" build -t jobportal-backend:latest ./backend
@@ -77,3 +77,4 @@ pipeline {
         }
     }
 }
+```
