@@ -51,6 +51,11 @@ pipeline {
                     cd backend
 
                     "%PYTHON%" -m pytest -v tests
+
+                    if errorlevel 1 (
+                        echo Tests failed!
+                        exit /b 1
+                    )
                 '''
             }
         }
@@ -62,46 +67,13 @@ pipeline {
                 bat '''
                     "%DOCKER%" build -t %DOCKER_IMAGE%:latest ./backend
 
-                    if errorlevel 1 exit /b 1
-                '''
-            }
-        }
-
-        stage('Docker Push') {
-            steps {
-                echo 'Logging into Docker Hub and pushing Docker image...'
-
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'dockerhub-credentials',
-                        usernameVariable: 'DOCKER_USERNAME',
-                        passwordVariable: 'DOCKER_PASSWORD'
+                    if errorlevel 1 (
+                        echo Docker image build failed!
+                        exit /b 1
                     )
-                ]) {
 
-                    bat '''
-                        echo %DOCKER_PASSWORD% | "%DOCKER%" login -u %DOCKER_USERNAME% --password-stdin
-
-                        if errorlevel 1 (
-                            echo Docker Hub login failed!
-                            exit /b 1
-                        )
-
-                        echo Docker Hub login successful.
-
-                        "%DOCKER%" push %DOCKER_IMAGE%:latest
-
-                        if errorlevel 1 (
-                            echo Docker image push failed!
-                            "%DOCKER%" logout
-                            exit /b 1
-                        )
-
-                        echo Docker image pushed successfully.
-
-                        "%DOCKER%" logout
-                    '''
-                }
+                    echo Docker image built successfully.
+                '''
             }
         }
     }
@@ -112,9 +84,8 @@ pipeline {
             echo '======================================'
             echo 'JOB PORTAL CI PIPELINE SUCCESSFUL'
             echo '======================================'
-            echo 'All tests passed.'
+            echo 'All automated tests passed.'
             echo 'Docker image built successfully.'
-            echo 'Docker image pushed to Docker Hub.'
             echo '======================================'
         }
 
