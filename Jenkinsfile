@@ -82,51 +82,54 @@ pipeline {
 
         stage('Docker Hub Push') {
             steps {
+
                 echo 'Publishing Docker images to Docker Hub...'
 
                 withCredentials([
                     usernamePassword(
-                        credentialsId: 'dockerhub-credentials',
+                        credentialsId: 'dockerhub-pat',
                         usernameVariable: 'DOCKER_USERNAME',
                         passwordVariable: 'DOCKER_PASSWORD'
                     )
                 ]) {
 
-                    powershell '''
-                        Write-Host "Logging in to Docker Hub..."
+                    bat '''
+                        echo Logging in to Docker Hub...
 
-                        $env:DOCKER_PASSWORD | & $env:DOCKER "login" "-u" $env:DOCKER_USERNAME "--password-stdin"
+                        "%DOCKER%" logout
 
-                        if ($LASTEXITCODE -ne 0) {
-                            Write-Host "Docker Hub login failed!"
-                            exit 1
-                        }
+                        echo %DOCKER_PASSWORD% | "%DOCKER%" login -u %DOCKER_USERNAME% --password-stdin
 
-                        Write-Host "Docker Hub login successful."
+                        if errorlevel 1 (
+                            echo Docker Hub login failed!
+                            exit /b 1
+                        )
 
-                        Write-Host "Pushing latest image..."
+                        echo Docker Hub login successful.
 
-                        & $env:DOCKER "push" "$env:DOCKER_IMAGE`:latest"
+                        echo Pushing latest image...
 
-                        if ($LASTEXITCODE -ne 0) {
-                            Write-Host "Docker Hub latest push failed!"
-                            exit 1
-                        }
+                        "%DOCKER%" push %DOCKER_IMAGE%:latest
 
-                        Write-Host "Latest image pushed successfully."
+                        if errorlevel 1 (
+                            echo Latest Docker image push failed!
+                            exit /b 1
+                        )
 
-                        Write-Host "Pushing build-specific image..."
+                        echo Latest image pushed successfully.
 
-                        & $env:DOCKER "push" "$env:DOCKER_IMAGE`:$env:BUILD_NUMBER"
+                        echo Pushing build-specific image...
 
-                        if ($LASTEXITCODE -ne 0) {
-                            Write-Host "Docker Hub build image push failed!"
-                            exit 1
-                        }
+                        "%DOCKER%" push %DOCKER_IMAGE%:%BUILD_NUMBER%
 
-                        Write-Host "Build-specific image pushed successfully."
+                        if errorlevel 1 (
+                            echo Build-specific Docker image push failed!
+                            exit /b 1
+                        )
 
-                        Write-Host "Docker images published successfully."
+                        echo Build-specific image pushed successfully.
+
+                        echo Docker images published successfully.
                     '''
                 }
             }
