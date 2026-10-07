@@ -76,62 +76,11 @@ pipeline {
                     )
 
                     echo Docker image built successfully.
+
+                    echo.
+                    echo Docker images created:
+                    "%DOCKER%" images %DOCKER_IMAGE%
                 '''
-            }
-        }
-
-        stage('Docker Hub Push') {
-            steps {
-
-                echo 'Publishing Docker images to Docker Hub...'
-
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'dockerhub-pat',
-                        usernameVariable: 'DOCKER_USERNAME',
-                        passwordVariable: 'DOCKER_PASSWORD'
-                    )
-                ]) {
-
-                    bat '''
-                        echo Logging in to Docker Hub...
-
-                        "%DOCKER%" logout
-
-                        echo %DOCKER_PASSWORD% | "%DOCKER%" login -u %DOCKER_USERNAME% --password-stdin
-
-                        if errorlevel 1 (
-                            echo Docker Hub login failed!
-                            exit /b 1
-                        )
-
-                        echo Docker Hub login successful.
-
-                        echo Pushing latest image...
-
-                        "%DOCKER%" push %DOCKER_IMAGE%:latest
-
-                        if errorlevel 1 (
-                            echo Latest Docker image push failed!
-                            exit /b 1
-                        )
-
-                        echo Latest image pushed successfully.
-
-                        echo Pushing build-specific image...
-
-                        "%DOCKER%" push %DOCKER_IMAGE%:%BUILD_NUMBER%
-
-                        if errorlevel 1 (
-                            echo Build-specific Docker image push failed!
-                            exit /b 1
-                        )
-
-                        echo Build-specific image pushed successfully.
-
-                        echo Docker images published successfully.
-                    '''
-                }
             }
         }
     }
@@ -144,7 +93,6 @@ pipeline {
             echo '======================================'
             echo 'All automated tests passed.'
             echo 'Docker image built successfully.'
-            echo 'Docker image published to Docker Hub.'
             echo '======================================'
         }
 
